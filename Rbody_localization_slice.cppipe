@@ -2,15 +2,15 @@ CellProfiler Pipeline: http://www.cellprofiler.org
 Version:5
 DateRevision:428
 GitHash:
-ModuleCount:28
+ModuleCount:25
 HasImagePlaneDetails:False
 
-Images:[module_num:1|svn_version:'Unknown'|variable_revision_number:2|show_window:False|notes:['To begin creating your project, use the Images module to compile a list of files and/or folders that you want to analyze. You can also specify a set of rules to include only the desired files in your selected folders.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+Images:[module_num:1|svn_version:'Unknown'|variable_revision_number:2|show_window:False|notes:['You will need 2 input datasets: 1) MaxIPs (timepoints split) and 2) Fully split data (C, Z, T all separate).', 'Drag these folders onto the input panel and click *Apply filters to the file list.* ']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     :
     Filter images?:Custom
     Select the rule criteria:and (extension does isimage) (directory doesnot containregexp "[\\\\/]\\.") (file doesnot startwith ".")
 
-Metadata:[module_num:2|svn_version:'Unknown'|variable_revision_number:6|show_window:False|notes:['The Metadata module optionally allows you to extract information describing your images (i.e, metadata) which will be stored along with your measurements. This information can be contained in the file name and/or location, or in an external file.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+Metadata:[module_num:2|svn_version:'Unknown'|variable_revision_number:6|show_window:False|notes:['Before each run, click *Update* and verify that channel, timepoint, xy position, and z position are correctly read.', '(MaxIP images will not have channel and Z)']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Extract metadata?:Yes
     Metadata data type:Text
     Metadata types:{"Channel": "text", "FileLocation": "text", "Frame": "text", "Position": "text", "Series": "text", "Timepoint": "text", "XY_Pos": "text", "Z": "text"}
@@ -38,7 +38,7 @@ Metadata:[module_num:2|svn_version:'Unknown'|variable_revision_number:6|show_win
     Metadata file name:None
     Does cached metadata exist?:No
 
-NamesAndTypes:[module_num:3|svn_version:'Unknown'|variable_revision_number:8|show_window:False|notes:['The NamesAndTypes module allows you to assign a meaningful name to each image by which other modules will refer to it.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+NamesAndTypes:[module_num:3|svn_version:'Unknown'|variable_revision_number:8|show_window:False|notes:['Before each run, click *Update* and verify that the images are correctly matched up by timepoint.', 'Adjust the ZPos parameter for both A647 and GFP images to change which Z slice is analyzed.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Assign a name to:Images matching rules
     Select the image type:Color image
     Name to assign these images:orig
@@ -77,7 +77,7 @@ Groups:[module_num:4|svn_version:'Unknown'|variable_revision_number:2|show_windo
     Metadata category:Timepoint
     Metadata category:Channel
 
-ColorToGray:[module_num:5|svn_version:'Unknown'|variable_revision_number:4|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+ColorToGray:[module_num:5|svn_version:'Unknown'|variable_revision_number:4|show_window:False|notes:['Split the MaxIP into channels']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Select the input image:MaxIP
     Conversion method:Split
     Image type:Channels
@@ -105,7 +105,7 @@ ColorToGray:[module_num:5|svn_version:'Unknown'|variable_revision_number:4|show_
     Relative weight of the channel:1.0
     Image name:GFPMaxIP
 
-Smooth:[module_num:6|svn_version:'Unknown'|variable_revision_number:2|show_window:True|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+Smooth:[module_num:6|svn_version:'Unknown'|variable_revision_number:2|show_window:False|notes:['Smooth the GFP slice with a gaussian filter. This will improve vesicle detection.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Select the input image:GFP
     Name the output image:GFPGaussian
     Select smoothing method:Gaussian Filter
@@ -114,7 +114,7 @@ Smooth:[module_num:6|svn_version:'Unknown'|variable_revision_number:2|show_windo
     Edge intensity difference:0.1
     Clip intensities to 0 and 1?:Yes
 
-EnhanceOrSuppressFeatures:[module_num:7|svn_version:'Unknown'|variable_revision_number:7|show_window:True|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+EnhanceOrSuppressFeatures:[module_num:7|svn_version:'Unknown'|variable_revision_number:7|show_window:False|notes:['Enhance speckles in the GFP channel to improve vesicle detection against diffuse background.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Select the input image:GFPGaussian
     Name the output image:GFPEnhanced
     Select the operation:Enhance
@@ -128,7 +128,7 @@ EnhanceOrSuppressFeatures:[module_num:7|svn_version:'Unknown'|variable_revision_
     Speed and accuracy:Fast
     Rescale result image:No
 
-Smooth:[module_num:8|svn_version:'Unknown'|variable_revision_number:2|show_window:True|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+Smooth:[module_num:8|svn_version:'Unknown'|variable_revision_number:2|show_window:False|notes:['Smooth the MaxIP GFP channel with a Gaussian filter. This will improve the cell outlines.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Select the input image:GFPMaxIP
     Name the output image:GFPMaxIPGaussian
     Select smoothing method:Gaussian Filter
@@ -137,35 +137,7 @@ Smooth:[module_num:8|svn_version:'Unknown'|variable_revision_number:2|show_windo
     Edge intensity difference:0.1
     Clip intensities to 0 and 1?:Yes
 
-Smooth:[module_num:9|svn_version:'Unknown'|variable_revision_number:2|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:False|wants_pause:False]
-    Select the input image:A647
-    Name the output image:A647Median
-    Select smoothing method:Median Filter
-    Calculate artifact diameter automatically?:No
-    Typical artifact diameter:2
-    Edge intensity difference:0.1
-    Clip intensities to 0 and 1?:Yes
-
-ImageMath:[module_num:10|svn_version:'Unknown'|variable_revision_number:5|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:False|wants_pause:False]
-    Operation:Subtract
-    Raise the power of the result by:1.0
-    Multiply the result by:1.0
-    Add to result:0.0
-    Set values less than 0 equal to 0?:Yes
-    Set values greater than 1 equal to 1?:Yes
-    Replace invalid values with 0?:Yes
-    Ignore the image masks?:No
-    Name the output image:GFPMinusMedian
-    Image or measurement?:Image
-    Select the first image:GFP
-    Multiply the first image by:1.0
-    Measurement:
-    Image or measurement?:Image
-    Select the second image:GFPMedian
-    Multiply the second image by:1.0
-    Measurement:
-
-IdentifyPrimaryObjects:[module_num:11|svn_version:'Unknown'|variable_revision_number:15|show_window:True|notes:['Identify cells using the max proj']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+IdentifyPrimaryObjects:[module_num:9|svn_version:'Unknown'|variable_revision_number:15|show_window:False|notes:['Identify cells using the smoothed max projection of the GFP channel.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Select the input image:GFPMaxIPGaussian
     Name the primary objects to be identified:Cells
     Typical diameter of objects, in pixel units (Min,Max):200,700
@@ -201,7 +173,7 @@ IdentifyPrimaryObjects:[module_num:11|svn_version:'Unknown'|variable_revision_nu
     # of deviations:2.0
     Thresholding method:Minimum Cross-Entropy
 
-IdentifyPrimaryObjects:[module_num:12|svn_version:'Unknown'|variable_revision_number:15|show_window:True|notes:['Identify Rbodies using a single slice']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+IdentifyPrimaryObjects:[module_num:10|svn_version:'Unknown'|variable_revision_number:15|show_window:False|notes:['Identify Rbodies using a single A647 slice.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Select the input image:A647
     Name the primary objects to be identified:Rbodies
     Typical diameter of objects, in pixel units (Min,Max):5,40
@@ -237,7 +209,7 @@ IdentifyPrimaryObjects:[module_num:12|svn_version:'Unknown'|variable_revision_nu
     # of deviations:2.0
     Thresholding method:Minimum Cross-Entropy
 
-IdentifyPrimaryObjects:[module_num:13|svn_version:'Unknown'|variable_revision_number:15|show_window:True|notes:['Identify vesicles using a single slice']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+IdentifyPrimaryObjects:[module_num:11|svn_version:'Unknown'|variable_revision_number:15|show_window:False|notes:['Identify vesicles using the enhanced single GFP slice.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Select the input image:GFPEnhanced
     Name the primary objects to be identified:Vesicles
     Typical diameter of objects, in pixel units (Min,Max):4,15
@@ -273,7 +245,7 @@ IdentifyPrimaryObjects:[module_num:13|svn_version:'Unknown'|variable_revision_nu
     # of deviations:2.0
     Thresholding method:Otsu
 
-MaskObjects:[module_num:14|svn_version:'Unknown'|variable_revision_number:3|show_window:True|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:True]
+MaskObjects:[module_num:12|svn_version:'Unknown'|variable_revision_number:3|show_window:False|notes:['Exclude Rbodies that are mostly outside cell boundaries.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:True]
     Select objects to be masked:Rbodies
     Name the masked objects:RbodiesInCells
     Mask using a region defined by other objects or by binary image?:Objects
@@ -284,7 +256,7 @@ MaskObjects:[module_num:14|svn_version:'Unknown'|variable_revision_number:3|show
     Numbering of resulting objects:Renumber
     Invert the mask?:No
 
-MaskObjects:[module_num:15|svn_version:'Unknown'|variable_revision_number:3|show_window:True|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+MaskObjects:[module_num:13|svn_version:'Unknown'|variable_revision_number:3|show_window:False|notes:['Define overlapping Rbodies by the % of their area that is overlapped with vesicle(s)']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Select objects to be masked:RbodiesInCells
     Name the masked objects:RbodiesInVesicles
     Mask using a region defined by other objects or by binary image?:Objects
@@ -295,7 +267,7 @@ MaskObjects:[module_num:15|svn_version:'Unknown'|variable_revision_number:3|show
     Numbering of resulting objects:Renumber
     Invert the mask?:No
 
-RescaleIntensity:[module_num:16|svn_version:'Unknown'|variable_revision_number:3|show_window:True|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+RescaleIntensity:[module_num:14|svn_version:'Unknown'|variable_revision_number:3|show_window:False|notes:['Rescale for export']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Select the input image:GFPGaussian
     Name the output image:GFPGaussianRescaled
     Rescaling method:Stretch each image to use the full intensity range
@@ -309,21 +281,7 @@ RescaleIntensity:[module_num:16|svn_version:'Unknown'|variable_revision_number:3
     Divisor value:1.0
     Divisor measurement:None
 
-RescaleIntensity:[module_num:17|svn_version:'Unknown'|variable_revision_number:3|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:False|wants_pause:False]
-    Select the input image:GFPMaxIPGaussian
-    Name the output image:GFPMaxIPGaussianRescaled
-    Rescaling method:Stretch each image to use the full intensity range
-    Method to calculate the minimum intensity:Custom
-    Method to calculate the maximum intensity:Custom
-    Lower intensity limit for the input image:0.0
-    Upper intensity limit for the input image:1.0
-    Intensity range for the input image:0.0,1.0
-    Intensity range for the output image:0.0,1.0
-    Select image to match in maximum intensity:None
-    Divisor value:1.0
-    Divisor measurement:None
-
-RescaleIntensity:[module_num:18|svn_version:'Unknown'|variable_revision_number:3|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+RescaleIntensity:[module_num:15|svn_version:'Unknown'|variable_revision_number:3|show_window:False|notes:['Rescale for export']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Select the input image:A647
     Name the output image:A647Rescaled
     Rescaling method:Stretch each image to use the full intensity range
@@ -337,7 +295,7 @@ RescaleIntensity:[module_num:18|svn_version:'Unknown'|variable_revision_number:3
     Divisor value:1.0
     Divisor measurement:None
 
-GrayToColor:[module_num:19|svn_version:'Unknown'|variable_revision_number:4|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+GrayToColor:[module_num:16|svn_version:'Unknown'|variable_revision_number:4|show_window:False|notes:['Colorize for export']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Select a color scheme:RGB
     Rescale intensity:No
     Select the image to be colored red:Leave this black
@@ -360,7 +318,7 @@ GrayToColor:[module_num:19|svn_version:'Unknown'|variable_revision_number:4|show
     Color:#ff0000
     Weight:1.0
 
-GrayToColor:[module_num:20|svn_version:'Unknown'|variable_revision_number:4|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+GrayToColor:[module_num:17|svn_version:'Unknown'|variable_revision_number:4|show_window:False|notes:['Colorize for export']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Select a color scheme:RGB
     Rescale intensity:No
     Select the image to be colored red:A647Rescaled
@@ -383,7 +341,7 @@ GrayToColor:[module_num:20|svn_version:'Unknown'|variable_revision_number:4|show
     Color:#ff0000
     Weight:1.0
 
-GrayToColor:[module_num:21|svn_version:'Unknown'|variable_revision_number:4|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+GrayToColor:[module_num:18|svn_version:'Unknown'|variable_revision_number:4|show_window:False|notes:['Colorize for export']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Select a color scheme:RGB
     Rescale intensity:No
     Select the image to be colored red:A647Rescaled
@@ -406,7 +364,7 @@ GrayToColor:[module_num:21|svn_version:'Unknown'|variable_revision_number:4|show
     Color:#ff0000
     Weight:1.0
 
-OverlayOutlines:[module_num:22|svn_version:'Unknown'|variable_revision_number:4|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+OverlayOutlines:[module_num:19|svn_version:'Unknown'|variable_revision_number:4|show_window:False|notes:['Overlay cellular Rbody outlines on cells']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Display outlines on a blank image?:No
     Select image on which to display outlines:RescaledA647Colorized
     Name the output image:RbodyOverlay
@@ -420,7 +378,7 @@ OverlayOutlines:[module_num:22|svn_version:'Unknown'|variable_revision_number:4|
     Select outline color:#FB0207
     Select objects to display:Cells
 
-OverlayOutlines:[module_num:23|svn_version:'Unknown'|variable_revision_number:4|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+OverlayOutlines:[module_num:20|svn_version:'Unknown'|variable_revision_number:4|show_window:False|notes:['Overlay vesicle outlines on cells']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Display outlines on a blank image?:No
     Select image on which to display outlines:RescaledGFPColorized
     Name the output image:VesicleOverlay
@@ -432,7 +390,7 @@ OverlayOutlines:[module_num:23|svn_version:'Unknown'|variable_revision_number:4|
     Select outline color:#FB0207
     Select objects to display:Cells
 
-OverlayOutlines:[module_num:24|svn_version:'Unknown'|variable_revision_number:4|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+OverlayOutlines:[module_num:21|svn_version:'Unknown'|variable_revision_number:4|show_window:False|notes:['Overlay colocalized Rbodies on cells']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Display outlines on a blank image?:No
     Select image on which to display outlines:RescaledMerge
     Name the output image:ColocOverlay
@@ -444,10 +402,10 @@ OverlayOutlines:[module_num:24|svn_version:'Unknown'|variable_revision_number:4|
     Select outline color:#FB0207
     Select objects to display:Cells
 
-ExportToSpreadsheet:[module_num:25|svn_version:'Unknown'|variable_revision_number:13|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+ExportToSpreadsheet:[module_num:22|svn_version:'Unknown'|variable_revision_number:13|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Select the column delimiter:Comma (",")
-    Add image metadata columns to your object data file?:No
-    Add image file and folder names to your object data file?:No
+    Add image metadata columns to your object data file?:Yes
+    Add image file and folder names to your object data file?:Yes
     Select the measurements to export:No
     Calculate the per-image mean values for object measurements?:No
     Calculate the per-image median values for object measurements?:No
@@ -468,7 +426,7 @@ ExportToSpreadsheet:[module_num:25|svn_version:'Unknown'|variable_revision_numbe
     File name:DATA.csv
     Use the object name for the file name?:Yes
 
-SaveImages:[module_num:26|svn_version:'Unknown'|variable_revision_number:16|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+SaveImages:[module_num:23|svn_version:'Unknown'|variable_revision_number:16|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Select the type of image to save:Image
     Select the image to save:RbodyOverlay
     Select method for constructing file names:From image filename
@@ -488,7 +446,7 @@ SaveImages:[module_num:26|svn_version:'Unknown'|variable_revision_number:16|show
     How to save the series:T (Time)
     Save with lossless compression?:Yes
 
-SaveImages:[module_num:27|svn_version:'Unknown'|variable_revision_number:16|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+SaveImages:[module_num:24|svn_version:'Unknown'|variable_revision_number:16|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Select the type of image to save:Image
     Select the image to save:VesicleOverlay
     Select method for constructing file names:From image filename
@@ -508,7 +466,7 @@ SaveImages:[module_num:27|svn_version:'Unknown'|variable_revision_number:16|show
     How to save the series:T (Time)
     Save with lossless compression?:Yes
 
-SaveImages:[module_num:28|svn_version:'Unknown'|variable_revision_number:16|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+SaveImages:[module_num:25|svn_version:'Unknown'|variable_revision_number:16|show_window:False|notes:[]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Select the type of image to save:Image
     Select the image to save:ColocOverlay
     Select method for constructing file names:From image filename
